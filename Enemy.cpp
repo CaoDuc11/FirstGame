@@ -41,6 +41,19 @@ void Enemy :: LoadFromFile( string path, SDL_Renderer *renderer)
 {
 	 EnemyTexture = loadTexture(path, renderer);
 }
+void Enemy :: Move(const int &acceleration)
+{
+	posX += -(ENEMY_SPEED + acceleration);
+	if( posX + MAX_ENEMY_WIDTH < 0)
+	{
+		posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
+		if (type == IN_AIR_ENEMY)
+		{
+			posY = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT + 1) + ENEMY_MIN_HEIGHT;
+		}
+
+	}
+}
 int  Enemy::GetPosX()
 {
 	return posX;
