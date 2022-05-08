@@ -11,8 +11,8 @@
 class Character
 {
 public:
-	static const int JUMP_SPEED = 8;
-	static const int FALL_SPEED = 8;
+	static const int JUMP_SPEED = 11;
+	static const int FALL_SPEED = 11;
 
 	Character();
 
@@ -23,11 +23,12 @@ public:
 	int GetPosX();
 
 	int GetPosY();
+	
+	int status;
 
 private:
 	int posX, posY;
-
-	int status;
+	
 };
 
 #endif 

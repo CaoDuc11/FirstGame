@@ -21,7 +21,7 @@
 #define MIX_CHANNEL -1
 
 #define TIME_MAX 1000
-#define GROUND 430
+#define GROUND 520
 #define MAX_HEIGHT 250
 
 #define BASE_OFFSET_SPEED 0

@@ -39,7 +39,6 @@ Enemy::~Enemy()
 }
 void Enemy :: LoadFromFile( string path, SDL_Renderer *renderer)
 {
-	 EnemyTexture = loadTexture(path, renderer);
 }
 void Enemy :: Move(const int &acceleration)
 {

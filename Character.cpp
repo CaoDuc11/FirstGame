@@ -1,8 +1,8 @@
 #include "Character.h"
-
+#include "GameBase.h"
 Character::Character() 
 {
-	posX = SCREEN_WIDTH - 700;
+	posX = 0;
 	posY = GROUND;
 	
 	status = 0;
