@@ -1,7 +1,7 @@
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
 
-#include "Header.h"
+#include "GameBase.h"
 
 
 #define JUMP 1

@@ -4,7 +4,7 @@
 #include"GameBase.h"
 
 #define ENEMY_MAX_HEIGHT 300
-#define ENEMY_MIN_HEIGHT 400
+#define ENEMY_MIN_HEIGHT 420
 
 #define ENEMY_POSITION_RANGE 250
 

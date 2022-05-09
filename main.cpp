@@ -110,13 +110,24 @@ int main (int argc, char* argv[] )
             }
             else BatRect.x = 0;
             SDL_RenderCopy(renderer, bat, &BatRect, &ene3);
+            
           
             //Dinosaur
-            if (character.OnGround())SDL_RenderCopy(renderer, Character, &DinoRect, &RedRect);
-            else SDL_RenderCopy(renderer, RedCharacter, 0, &JumpRect);
+            if (character.OnGround()) 
+            {
+                if (CheckCollision(RedRect, ene1) || CheckCollision(RedRect, ene2) || CheckCollision(RedRect, ene3))  Quit = true;
+                SDL_RenderCopy(renderer, Character, &DinoRect, &RedRect);
+            }  
+            else 
+            {
+                if (CheckCollision(JumpRect, ene1) || CheckCollision(JumpRect, ene2) || CheckCollision(JumpRect, ene3))  Quit = true;
+                SDL_RenderCopy(renderer, RedCharacter, 0, &JumpRect);
+            } 
+                
+
 
             SDL_RenderPresent(renderer);
-            
+        
             
         }
     
