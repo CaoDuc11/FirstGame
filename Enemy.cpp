@@ -13,7 +13,7 @@ Enemy::Enemy(int _type)
 	if (type == IN_AIR_ENEMY)
 	{
 		posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-		posY = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT + 1) + ENEMY_MIN_HEIGHT;
+		posY = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT +1) + ENEMY_MIN_HEIGHT;
 	}
 	else if (type == ON_GROUND_ENEMY)
 	{
@@ -37,18 +37,16 @@ Enemy::~Enemy()
 		EnemyTexture = nullptr;
 	}
 }
-void Enemy :: LoadFromFile( string path, SDL_Renderer *renderer)
-{
-}
 void Enemy :: Move(const int &acceleration)
 {
-	posX += -(ENEMY_SPEED + acceleration);
+	if (type == ON_GROUND_ENEMY)	posX += -(ENEMY_SPEED + acceleration);
+	else posX += -(FLY_SPEED + acceleration);
 	if( posX + MAX_ENEMY_WIDTH < 0)
 	{
 		posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
 		if (type == IN_AIR_ENEMY)
 		{
-			posY = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT + 1) + ENEMY_MIN_HEIGHT;
+			posY = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT +1) + ENEMY_MIN_HEIGHT;
 		}
 
 	}

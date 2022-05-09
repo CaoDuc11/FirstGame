@@ -59,3 +59,23 @@ SDL_Texture* loadTexture(string path, SDL_Renderer* renderer) {
     }
     return newTexture;
 }
+int UpdateGameTimeAndScore(int& time, int& speed, int& score)
+{
+    if (time == TIME_MAX)
+    {
+        speed += SPEED_INCREASEMENT;
+    }
+
+    if (time > TIME_MAX)
+    {
+        time = 0;
+    }
+    if (time % 5 == 0)
+    {
+        score += SCORE_INCREASEMENT;
+    }
+
+    time += TIME_INCREASEMENT;
+
+    return time;
+}

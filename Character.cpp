@@ -2,7 +2,7 @@
 #include "GameBase.h"
 Character::Character() 
 {
-	posX = 0;
+	posX = 300;
 	posY = GROUND;
 	
 	status = 0;

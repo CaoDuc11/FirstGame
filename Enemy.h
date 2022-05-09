@@ -4,12 +4,9 @@
 #include"GameBase.h"
 
 #define ENEMY_MAX_HEIGHT 300
-#define ENEMY_MIN_HEIGHT 330
+#define ENEMY_MIN_HEIGHT 400
 
 #define ENEMY_POSITION_RANGE 250
-#define ENEMY1_RANGE 100
-#define ENEMY2_RANGE 350
-#define ENEMY3_RANGE 500
 
 using namespace std;
 class Enemy
@@ -18,8 +15,6 @@ public:
 	Enemy(int _type = 0);
 
 	~Enemy();
-
-	void LoadFromFile( string path, SDL_Renderer* renderer);
 
 	void Move(const int& acceleration);
 
