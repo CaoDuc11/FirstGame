@@ -55,7 +55,5 @@ void waitUntilKeyPressed();
 SDL_Texture* loadTexture(string path, SDL_Renderer* renderer);
 
 int UpdateGameTimeAndScore(int& time, int& speed, int& score);
-
-bool CheckCollision(const SDL_Rect& object1, const SDL_Rect& object2);
 #endif 
 

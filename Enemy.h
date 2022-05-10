@@ -24,6 +24,8 @@ public:
 
 	int GetSpeed(const int& acceleration);
 
+	bool CheckCollision(const SDL_Rect& object1, const SDL_Rect& object2);
+
 	int GetPosX();
 
 	int GetPosY();

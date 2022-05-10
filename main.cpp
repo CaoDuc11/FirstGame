@@ -39,8 +39,8 @@ int main (int argc, char* argv[] )
     SDL_Texture* Character = loadTexture("DinoRed.png", renderer);
     SDL_Texture* RedCharacter = loadTexture("unnamed.png", renderer);
     SDL_Rect DinoRect= { 0, 0, 57, 57};
-    SDL_Rect RedRect = { 300, GROUND, 100, 100};
-    SDL_Rect JumpRect = { 300, GROUND, 69, 69 };
+    SDL_Rect RedRect = { 300, GROUND , 100, 100};
+    SDL_Rect JumpRect = { 300, GROUND, 75, 75 };
 
     //Load cactus
     SDL_Texture* cactus = loadTexture("cactus.png", renderer);
@@ -72,7 +72,7 @@ int main (int argc, char* argv[] )
             SDL_RenderClear(renderer);
             //Animations of Dino
             
-            if (DinoRect.x < 285) {
+            if (DinoRect.x < 180) {
                 DinoRect.x += 57;
                 SDL_Delay(20);
             }
@@ -115,21 +115,20 @@ int main (int argc, char* argv[] )
             //Dinosaur
             if (character.OnGround()) 
             {
-                if (CheckCollision(RedRect, ene1) || CheckCollision(RedRect, ene2) || CheckCollision(RedRect, ene3))  Quit = true;
+                if (enemy1.CheckCollision(RedRect, ene1) || enemy2.CheckCollision(RedRect, ene2) || enemy3.CheckCollision(RedRect, ene3))  Quit = true;
+                
                 SDL_RenderCopy(renderer, Character, &DinoRect, &RedRect);
             }  
             else 
             {
-                if (CheckCollision(JumpRect, ene1) || CheckCollision(JumpRect, ene2) || CheckCollision(JumpRect, ene3))  Quit = true;
+                if (enemy1.CheckCollision(JumpRect, ene1) || enemy2.CheckCollision(JumpRect, ene2) || enemy3.CheckCollision(JumpRect, ene3)) Quit = true;
+                  
                 SDL_RenderCopy(renderer, RedCharacter, 0, &JumpRect);
             } 
-                
-
-
-            SDL_RenderPresent(renderer);
+             SDL_RenderPresent(renderer);
         
             
-        }
+    }
     
     
     waitUntilKeyPressed();
