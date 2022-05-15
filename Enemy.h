@@ -3,10 +3,10 @@
 
 #include"GameBase.h"
 
-#define ENEMY_MAX_HEIGHT 300
-#define ENEMY_MIN_HEIGHT 420
+#define ENEMY_MAX_HEIGHT 250
+#define ENEMY_MIN_HEIGHT 400
 
-#define ENEMY_POSITION_RANGE 250
+#define ENEMY_POSITION_RANGE 1000
 
 using namespace std;
 class Enemy

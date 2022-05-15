@@ -20,14 +20,17 @@ public:
 
 	void Move();
 
+	void HandleEvent(SDL_Event& e, Mix_Chunk* gJump);
+
 	int GetPosX();
 
 	int GetPosY();
 	
-	int status;
+	
 
 private:
 	int posX, posY;
+	int status;
 	
 };
 

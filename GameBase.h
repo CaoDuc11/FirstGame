@@ -31,20 +31,25 @@
 #define TIME_INCREASEMENT 1
 #define FRAME_INCREASEMENT 1
 
-#define GROUND_SPEED 10
-#define ENEMY_SPEED 5
+#define GROUND_SPEED 11
+#define ENEMY_SPEED 6
 #define FLY_SPEED 8
-#define MAX_ENEMY_WIDTH 100
+#define MAX_ENEMY_WIDTH 360
 
 #define IN_AIR_ENEMY 1
 #define ON_GROUND_ENEMY 0
 
 using namespace std;
-const  string WINDOW_TITLE = "FIGHT AND RUN";
+
+
+
+const  string WINDOW_TITLE = "Adventures on Mars";
 const   int SCREEN_WIDTH = 1100;
 const   int SCREEN_HEIGHT = 720;
+const	int FPS = 25;
 
 void logSDLError(std::ostream& os, const std::string& msg, bool fatal);
+void LogError(std::string msg, int error_code);
 
 void initSDL(SDL_Window*& window, SDL_Renderer*& renderer);
 
@@ -54,6 +59,5 @@ void waitUntilKeyPressed();
 
 SDL_Texture* loadTexture(string path, SDL_Renderer* renderer);
 
-int UpdateGameTimeAndScore(int& time, int& speed, int& score);
 #endif 
 

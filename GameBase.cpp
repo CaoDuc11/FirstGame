@@ -59,23 +59,24 @@ SDL_Texture* loadTexture(string path, SDL_Renderer* renderer) {
     }
     return newTexture;
 }
-int UpdateGameTimeAndScore(int& time, int& speed, int& score)
+
+
+void LogError(std::string msg, int error_code)
 {
-    if (time == TIME_MAX)
+    if (error_code == SDL_ERROR)
     {
-        speed += SPEED_INCREASEMENT;
+        std::cout << msg << SDL_GetError() << std::endl;
     }
-
-    if (time > TIME_MAX)
+    if (error_code == IMG_ERROR)
     {
-        time = 0;
+        std::cout << msg << IMG_GetError() << std::endl;
     }
-    if (time % 5 == 0)
+    if (error_code == MIX_ERROR)
     {
-        score += SCORE_INCREASEMENT;
+        std::cout << msg << Mix_GetError() << std::endl;
     }
-
-    time += TIME_INCREASEMENT;
-
-    return time;
+    if (error_code == TTF_ERROR)
+    {
+        std::cout << msg << TTF_GetError() << std::endl;
+    }
 }

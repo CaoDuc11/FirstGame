@@ -88,15 +88,10 @@ int Enemy::GetSpeed(const int& acceleration)
 }
 bool Enemy :: CheckCollision(const SDL_Rect& object1, const SDL_Rect& object2)
 {
-    int left_a;
-    int right_a;
-    int top_a;
-    int bottom_a;
-
-    left_a = object1.x + 20;
-    right_a = object1.x + object1.w - 20;
-    top_a = object1.y;
-    bottom_a = object1.y + object1.h;
+    int left_a = object1.x + 22;
+    int right_a = object1.x + object1.w - 22;
+    int top_a = object1.y +12;
+    int bottom_a = object1.y + object1.h - 12;
     int left_b;
     int right_b;
     int top_b;
@@ -104,17 +99,17 @@ bool Enemy :: CheckCollision(const SDL_Rect& object1, const SDL_Rect& object2)
 
     if (type == ON_GROUND_ENEMY)
     {
-        left_b = object2.x + 20;
-        right_b = object2.x + object2.w - 20;
-        top_b = object2.y + 8;
-        bottom_b = object2.y + object2.h - 8;
+        left_b = object2.x + 22;
+        right_b = object2.x + object2.w - 22;
+        top_b = object2.y + 10;
+        bottom_b = object2.y + object2.h - 10;
     }
     else
     {
-        left_b = object2.x + 20;
-        right_b = object2.x + object2.w - 20;
-        top_b = object2.y ;
-        bottom_b = object2.y + object2.h;
+        left_b = object2.x + 12;
+        right_b = object2.x + object2.w - 12;
+        top_b = object2.y + 12 ;
+        bottom_b = object2.y + object2.h -12;
     }
     // Case 1: size object 1 < size object 2
     if (left_a > left_b && left_a < right_b)
