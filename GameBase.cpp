@@ -61,22 +61,27 @@ SDL_Texture* loadTexture(string path, SDL_Renderer* renderer) {
 }
 
 
-void LogError(std::string msg, int error_code)
+void LogError( string msg, int error_code)
 {
     if (error_code == SDL_ERROR)
     {
-        std::cout << msg << SDL_GetError() << std::endl;
+        cout << msg << SDL_GetError() << endl;
     }
     if (error_code == IMG_ERROR)
     {
-        std::cout << msg << IMG_GetError() << std::endl;
+        cout << msg << IMG_GetError() << endl;
     }
     if (error_code == MIX_ERROR)
     {
-        std::cout << msg << Mix_GetError() << std::endl;
+        cout << msg << Mix_GetError() << endl;
     }
     if (error_code == TTF_ERROR)
     {
-        std::cout << msg << TTF_GetError() << std::endl;
+        cout << msg << TTF_GetError() << endl;
     }
+}
+bool CheckFocusWithRect(const int& x, const int& y, SDL_Rect& rect)
+{
+    if (x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h) return true;
+    return false;
 }

@@ -28,19 +28,14 @@ void Character::Move()
 }
 void Character::HandleEvent(SDL_Event& e, Mix_Chunk* gJump)
 {
-	if (e.type == SDL_KEYDOWN && e.key.repeat == 0)
+	if (e.key.keysym.sym == SDLK_SPACE && OnGround())
 	{
-		switch (e.key.keysym.sym)
-		{
-		case SDLK_SPACE:
-			if (OnGround())
-			{
-				Mix_PlayChannel(MIX_CHANNEL, gJump, 0);
-				status = JUMP;
-			}
+		Mix_PlayChannel(MIX_CHANNEL, gJump, 0);
+		status = JUMP;
+	}  
 		
-		}
-	}
+		
+	
 }
 int Character::GetPosX()
 {
