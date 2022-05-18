@@ -374,7 +374,8 @@ int main (int argc, char* argv[] )
         while( Play_Game)
         {
             bool Quit = 0;
-            Mix_PlayMusic(gMusic, 1);
+            if (Mix_PausedMusic()) Mix_ResumeMusic();
+            else Mix_PlayMusic(gMusic, 1);
             Character character;
             Time fps;
 
