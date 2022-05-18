@@ -6,7 +6,7 @@
 #define ENEMY_MAX_HEIGHT 280
 #define ENEMY_MIN_HEIGHT 400
 
-#define ENEMY_POSITION_RANGE 650
+#define ENEMY_POSITION_RANGE 850
 
 using namespace std;
 class Enemy
