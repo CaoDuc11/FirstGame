@@ -32,10 +32,11 @@
 #define FRAME_INCREASEMENT 1
 
 #define GROUND_SPEED 6
-#define ENEMY_SPEED 6
+#define ENEMY_SPEED 7
 #define FLY_SPEED 8
-#define MAX_ENEMY_WIDTH 360
+#define MAX_ENEMY_WIDTH 420
 
+#define SLIME_ENEMY 2
 #define IN_AIR_ENEMY 1
 #define ON_GROUND_ENEMY 0
 
@@ -46,7 +47,7 @@ using namespace std;
 const  string WINDOW_TITLE = "Adventures on Mars";
 const   int SCREEN_WIDTH = 1080;
 const   int SCREEN_HEIGHT = 720;
-const	int FPS = 25;
+const	int FPS = 30;
 
 void logSDLError(std::ostream& os, const std::string& msg, bool fatal);
 void LogError( string msg, int error_code);

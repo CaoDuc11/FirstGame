@@ -8,12 +8,12 @@ using namespace std;
 
 Mix_Music* gMusic = nullptr;
 Mix_Music* gMenuMusic = nullptr;
-Mix_Chunk* gClick = nullptr;
 Mix_Chunk* gJump = nullptr;
 Mix_Chunk* gLose = nullptr;
 Mix_Chunk* gTing = nullptr;
 
 TTF_Font* gFontText = nullptr;
+TTF_Font* gFontScore = nullptr;
 
 SDL_Texture* g_img_Menu = nullptr;
 SDL_Texture* g_img_Information = nullptr;
@@ -53,6 +53,7 @@ void SaveScore(  const string score, const string path)
     HighScoreFile.open(path, ios::out);
     HighScoreFile.clear();
     HighScoreFile << score;
+    HighScoreFile.close();
 }
 string GetHighScoreAndUpdate( const string path,  const int score)
 {
@@ -65,6 +66,7 @@ string GetHighScoreAndUpdate( const string path,  const int score)
     string highScore = to_string( score);
 
     int old_HI = ConvertToInt( old_high_score);
+    HighScoreFile.close();
     if (score > old_HI)
     {
         SaveScore(highScore, path); 
@@ -90,12 +92,6 @@ bool LoadMediaAndTtf()
         LogError("Failed to load menu music", MIX_ERROR);
         success = false;
     }
-    gClick = Mix_LoadWAV("mouse_click.wav");
-    if (gClick == nullptr)
-    {
-        LogError("Failed to load mouse click sound", MIX_ERROR);
-        success = false;
-    }
 
     gJump = Mix_LoadWAV("jump_sound.wav");
     if (gJump == nullptr)
@@ -118,10 +114,16 @@ bool LoadMediaAndTtf()
     }
     
     if (TTF_Init() == -1) return false;
-    gFontText = TTF_OpenFont( "font//ARCADE.ttf", 48);
+    gFontText = TTF_OpenFont( "font//ARCADE.ttf", 60);
     if (gFontText == nullptr)
     {
-        LogError("Failed to load font", TTF_ERROR);
+        LogError("Failed to load font Menu", TTF_ERROR);
+        success = false;
+    }
+    gFontScore = TTF_OpenFont("font//ARCADE.ttf", 30);
+    if (gFontScore == nullptr)
+    {
+        LogError("Failed to load font Score", TTF_ERROR);
         success = false;
     }
     return success;
@@ -133,14 +135,14 @@ int ShowMenu(SDL_Renderer* renderer, TTF_Font* font)
 
     const int kMenuItemNum = 3;
     SDL_Rect pos_arr[kMenuItemNum];
-    pos_arr[0].x = 200;
-    pos_arr[0].y = 400;
+    pos_arr[0].x = 100;
+    pos_arr[0].y = 300;
 
-    pos_arr[1].x = 200;
-    pos_arr[1].y = 500;
+    pos_arr[1].x = 100;
+    pos_arr[1].y = 400;
 
-    pos_arr[2].x = 200;
-    pos_arr[2].y = 600;
+    pos_arr[2].x = 100;
+    pos_arr[2].y = 500;
 
     TextObject text_Menu[kMenuItemNum];
     text_Menu[0].SetText("Play Game");
@@ -228,6 +230,7 @@ int ShowMenu(SDL_Renderer* renderer, TTF_Font* font)
         }
         SDL_RenderPresent(renderer);
     }
+    SDL_DestroyTexture(g_img_Menu);
     return 2;
 }
 int ShowInformation( SDL_Renderer* renderer, TTF_Font* font)
@@ -304,8 +307,25 @@ int ShowInformation( SDL_Renderer* renderer, TTF_Font* font)
         }
         SDL_RenderPresent(renderer);
     }
+    SDL_DestroyTexture(g_img_Information);
 
+}
+void CloseProgramme()
+{
+    Mix_FreeMusic(gMusic);
+    Mix_FreeMusic(gMenuMusic);
+    Mix_FreeChunk(gLose);
+    Mix_FreeChunk(gJump);
+    Mix_FreeChunk(gTing);
+    gMusic = nullptr;
+    gMenuMusic = nullptr;
+    gLose = nullptr;
+    gJump = nullptr;
+    gTing = nullptr;
 
+    IMG_Quit();
+    Mix_Quit();
+    SDL_Quit();
 }
 
 int main (int argc, char* argv[] )
@@ -316,220 +336,278 @@ int main (int argc, char* argv[] )
         SDL_Renderer* renderer;
         initSDL(window, renderer);
 
-        bool Quit = 0;
         bool Quit_Menu = false;
-        Mix_PlayMusic(gMenuMusic, -1);
+        bool Play_Game = true;
+        Mix_PlayMusic(gMenuMusic, 1);
         while( !Quit_Menu)
         {
             int checkExit = ShowMenu(renderer, gFontText);
-            while (checkExit != 0 && Quit == false)
+            while (checkExit != 0 && Play_Game == true)
             {
                 if (checkExit == 2)
                 {
-                    Quit = true;
+                    Play_Game = false;
                     Quit_Menu = true;
                 } 
                 else
                 {
                     if (checkExit == 1)
                     {
+                        
                         checkExit = ShowInformation(renderer, gFontText);
                         if (checkExit == 2)
                         {
-                            Quit = true;
+                            Play_Game = false;
                             Quit_Menu = true;
                         }
                         else
                         {
-                            SDL_RenderClear(renderer);
                             checkExit = ShowMenu(renderer, gFontText);
+                            
                         }
                     }
                 }
             }
             Quit_Menu = true;
         }
-        Mix_PlayMusic(gMusic, -1);
-        Character character;
-        Time fps;
-        TextObject score_text;
-        score_text.setColor( TextObject :: WHITE_TEXT);
-
-        TextObject HIscore_text;
-        HIscore_text.setColor(TextObject::WHITE_TEXT);
         
-        srand(time(NULL));
-        int time = 0;
-        int score = 0;
-        int acceleration = 5;
+        while( Play_Game)
+        {
+            bool Quit = 0;
+            Mix_PlayMusic(gMusic, 1);
+            Character character;
+            Time fps;
 
-        SDL_Event e;
-        Enemy enemy1(ON_GROUND_ENEMY);
-        Enemy enemy2(ON_GROUND_ENEMY);
-        Enemy enemy3(IN_AIR_ENEMY);
+            srand(time(NULL));
+            int time = 0;
+            int score = 0;
+            int acceleration = 5;
 
-       
+            SDL_Event e;
+            Enemy enemy1(ON_GROUND_ENEMY);
+            Enemy enemy2(ON_GROUND_ENEMY);
+            Enemy enemy3(IN_AIR_ENEMY);
+            Enemy enemy4(SLIME_ENEMY);
+
+
+
+
+            //Load Background
+            SDL_Texture* Background = loadTexture("BackgroundUpdate.png", renderer);
+            SDL_Rect BackgroundRect = { 0, 0 , 2051, 720 };
+
+            SDL_Rect BackgroundP2Rect;
+            BackgroundP2Rect.y = 0;
+            BackgroundP2Rect.w = 2051;
+            BackgroundP2Rect.h = 720;
+
+            //Load EndGame
+            SDL_Texture* EndGame = loadTexture("EndGame.png", renderer);
+
+            //Load main character
+            SDL_Texture* Character = loadTexture("DinoRed.png", renderer);
+            SDL_Texture* RedCharacter = loadTexture("unnamed.png", renderer);
+            SDL_Rect DinoRect = { 0, 0, 57, 57 };
+            SDL_Rect RedRect = { 300, GROUND , 100, 100 };
+            SDL_Rect JumpRect = { 300, GROUND, 72, 72 };
+
+            //Load cactus
+            SDL_Texture* cactus = loadTexture("cactus.png", renderer);
+            SDL_Rect ene1 = { 0, GROUND, 90, 90 };
+            SDL_Rect ene2 = { 0, GROUND + 30, 69, 69 };
+
+            //Load bat
+            SDL_Texture* bat = loadTexture("bat.png", renderer);
+            SDL_Rect BatRect = { 0, 0, 43,30 };
+            SDL_Rect ene3 = { 0, 0, 60, 50 };
+
+            //Load slime
+            SDL_Texture* slime = loadTexture("slime.png", renderer);
+            SDL_Rect SlimeRect = { 0, 0 ,32, 32 };
+            SDL_Rect ene4 = { 0, GROUND, 110, 110 };
+            while (!Quit)
+            {
+
+                fps.start();
+                UpdateGameTimeAndScore(time, acceleration, score);
+
+                while (SDL_PollEvent(&e) != 0)
+                {
+                    if (e.type == SDL_QUIT) {
+                        Quit = true;
+                        Play_Game = false;
+                        break;
+                    }
+                    character.HandleEvent(e, gJump);
+
+                }
+
+                SDL_RenderClear(renderer);
+
+
+                //Animations of Background
+                BackgroundRect.x += -(GROUND_SPEED + acceleration);
+                BackgroundP2Rect.x = BackgroundRect.x + BackgroundRect.w;
+                if (BackgroundP2Rect.x <= 0) BackgroundRect.x = 0;
+
+                SDL_RenderCopy(renderer, Background, NULL, &BackgroundRect);
+                SDL_RenderCopy(renderer, Background, NULL, &BackgroundP2Rect);
+               
+                //ShowHighScore
+                TextObject HIscore_text;
+                HIscore_text.setColor(TextObject::WHITE_TEXT);
+                string val_str_HIscore = GetHighScoreAndUpdate("HighScore.txt", score);
+                string str_HIscore("HighScore: ");
+                str_HIscore += val_str_HIscore;
+                HIscore_text.SetText(str_HIscore);
+                HIscore_text.loadFromRenderedText(gFontScore, renderer);
+                HIscore_text.RenderText(renderer, SCREEN_WIDTH - 500, 15);
+
+
+                //ShowScore
+                TextObject score_text;
+                score_text.setColor(TextObject::WHITE_TEXT);
+                string val_str_score = to_string(score);
+                string str_score("Score: ");
+                str_score += val_str_score;
+                score_text.SetText(str_score);
+                score_text.loadFromRenderedText(gFontScore, renderer);
+                score_text.RenderText(renderer, SCREEN_WIDTH - 200 , 15);
+
+
+                //Animations of Dino
+                JumpRect.x = character.GetPosX();
+                JumpRect.y = character.GetPosY();
+                character.Move();
+
+                //Moving of Cactus
+                enemy1.Move(acceleration);
+                ene1.x = enemy1.GetPosX();
+                SDL_RenderCopy(renderer, cactus, 0, &ene1);
+
+                enemy2.Move(acceleration);
+                ene2.x = enemy2.GetPosX();
+                SDL_RenderCopy(renderer, cactus, 0, &ene2);
+
+                //Moving of Bat
+                enemy3.Move(acceleration);
+                ene3.x = enemy3.GetPosX();
+                ene3.y = enemy3.GetPosY();
+                SDL_RenderCopy(renderer, bat, &BatRect, &ene3);
+
+                //Moving of Slime
+                enemy4.Move(acceleration);
+                ene4.x = enemy4.GetPosX();
+                ene4.y = enemy4.GetPosY();
+                SDL_RenderCopy(renderer, slime, &SlimeRect, &ene4);
+                
+                //Animations of Dino
+                if (DinoRect.x < 180)DinoRect.x += 57;
+                else DinoRect.x = 0;
+
+                //Animations of Bat
+                if (BatRect.x < 162) BatRect.x += 43;
+                else BatRect.x = 0;
+
+                //Animations of Slime
+                if (SlimeRect.x < 160) SlimeRect.x += 32;
+                else SlimeRect.x = 0;
+                
+                //Dinosaur && Collision
+                if (character.OnGround())
+                {
+                    SDL_RenderCopy(renderer, Character, &DinoRect, &RedRect);
+                    if (enemy1.CheckCollision(RedRect, ene1) || 
+                        enemy2.CheckCollision(RedRect, ene2) ||
+                        enemy3.CheckCollision(RedRect, ene3) ||
+                        enemy4.CheckCollision(RedRect, ene4))
+                    {
+                        Mix_PauseMusic();
+                        Mix_PlayChannel(MIX_CHANNEL, gLose, 0);
+                        Quit = 1;
+                        break;
+                    }
+
+                }
+                else
+                {
+                    SDL_RenderCopy(renderer, RedCharacter, 0, &JumpRect);
+                    if (enemy1.CheckCollision(JumpRect, ene1) || 
+                        enemy2.CheckCollision(JumpRect, ene2) || 
+                        enemy3.CheckCollision(JumpRect, ene3) ||
+                        enemy4.CheckCollision(JumpRect, ene4))
+                    {
+                        Mix_PauseMusic();
+                        Mix_PlayChannel(MIX_CHANNEL, gLose, 0);
+                        Quit = 1;
+                        break;
+                    }
+                }
+                //Fix FPS
+                int realtime = fps.getTicks();
+                int one_frame = 1000 / FPS;
+                if (realtime < one_frame)
+                {
+                    int delay_time = one_frame - realtime;
+                    if (delay_time >= 0) SDL_Delay(delay_time);
+                }
+                else SDL_Delay(one_frame);
+
+                SDL_RenderPresent(renderer);
+                
+                HIscore_text.Free();
+                score_text.Free();
+            }
+            // Check Play Again
+            if( Play_Game)
+            {
+                SDL_RenderCopy(renderer, EndGame, NULL, NULL);
+                SDL_RenderPresent(renderer);
+                bool End = false;
+                while (!End)
+                {
+                    while (SDL_PollEvent(&e) != 0)
+                    {
+                        if (e.type == SDL_QUIT)
+                        {
+                            Play_Game = false;
+                            End = true;
+                            break;
+                        }
+
+                        if (e.type == SDL_KEYDOWN)
+                        {
+                            switch (e.key.keysym.sym)
+                            {
+                            case SDLK_SPACE:
+                                End = true;
+                                break;
+                            case SDLK_ESCAPE:
+                                End = true;
+                                Play_Game = false;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+            SDL_DestroyTexture(Character);
+            SDL_DestroyTexture(RedCharacter);
+            SDL_DestroyTexture(cactus);
+            SDL_DestroyTexture(bat);
+            SDL_DestroyTexture(slime);
+            SDL_DestroyTexture(EndGame);
+            SDL_DestroyTexture(Background);
+
+        }
         
-       
-       
-        //Load Background
-        SDL_Texture* Background = loadTexture("BackgroundUpdate.png", renderer);
-        SDL_Rect BackgroundRect = { 0, 0 , 2051, 720 };
-
-        SDL_Rect BackgroundP2Rect;
-        BackgroundP2Rect.y = 0;
-        BackgroundP2Rect.w = 2051;
-        BackgroundP2Rect.h = 720;
-
-        //Load main character
-        SDL_Texture* Character = loadTexture("DinoRed.png", renderer);
-        SDL_Texture* RedCharacter = loadTexture("unnamed.png", renderer);
-        SDL_Rect DinoRect = { 0, 0, 57, 57 };
-        SDL_Rect RedRect = { 300, GROUND , 100, 100 };
-        SDL_Rect JumpRect = { 300, GROUND, 72, 72 };
-
-        //Load cactus
-        SDL_Texture* cactus = loadTexture("cactus.png", renderer);
-        SDL_Rect ene1 = { 0, GROUND, 90, 90 };
-        SDL_Rect ene2 = { 0, GROUND + 30, 60, 60 };
-
-        //Load bat
-        SDL_Texture* bat = loadTexture("bat.png", renderer);
-        SDL_Rect BatRect = { 0, 0, 43,30 };
-        SDL_Rect ene3 = { 0, 0, 60, 50 };
-       while (!Quit)
-       {
-           
-           fps.start();
-           UpdateGameTimeAndScore(time, acceleration, score);
-
-           while (SDL_PollEvent(&e) != 0)
-           {
-               if (e.type == SDL_QUIT) {
-                   Quit = true;
-                   break;
-               }
-               character.HandleEvent(e, gJump);
-
-           }
-
-           SDL_RenderClear(renderer);
-
-
-           //Animations of Background
-           BackgroundRect.x += -(GROUND_SPEED + acceleration);
-           BackgroundP2Rect.x = BackgroundRect.x + BackgroundRect.w;
-           if (BackgroundP2Rect.x <= 0) BackgroundRect.x = 0;
-
-           SDL_RenderCopy(renderer, Background, NULL, &BackgroundRect);
-           SDL_RenderCopy(renderer, Background, NULL, &BackgroundP2Rect);
-
-           //ShowHighScore
-           string val_str_HIscore = GetHighScoreAndUpdate("HighScore.txt", score);
-           string str_HIscore("HighScore: ");
-           str_HIscore += val_str_HIscore;
-           HIscore_text.SetText(str_HIscore);
-           HIscore_text.loadFromRenderedText(gFontText, renderer);
-           HIscore_text.RenderText(renderer, SCREEN_WIDTH - 600, 15);
-
-
-           //ShowScore
-           string val_str_score = to_string(score);
-           string str_score("Score: ");
-           str_score += val_str_score;
-           score_text.SetText(str_score);
-           score_text.loadFromRenderedText(gFontText, renderer);
-           score_text.RenderText(renderer, SCREEN_WIDTH - 250, 15);
-
-
-           //Animations of Dino
-           JumpRect.x = character.GetPosX();
-           JumpRect.y = character.GetPosY();
-           character.Move();
-
-           //Moving of Cactus
-           enemy1.Move(acceleration);
-           ene1.x = enemy1.GetPosX();
-           SDL_RenderCopy(renderer, cactus, 0, &ene1);
-
-           enemy2.Move(acceleration);
-           ene2.x = enemy2.GetPosX();
-           SDL_RenderCopy(renderer, cactus, 0, &ene2);
-
-           //Moving of Bat
-           enemy3.Move(acceleration);
-           ene3.x = enemy3.GetPosX();
-           ene3.y = enemy3.GetPosY();
-
-
-           SDL_RenderCopy(renderer, bat, &BatRect, &ene3);
-
-
-           //Dinosaur && Collision
-           if (character.OnGround())
-           {
-               SDL_RenderCopy(renderer, Character, &DinoRect, &RedRect);
-               if (enemy1.CheckCollision(RedRect, ene1) || enemy2.CheckCollision(RedRect, ene2) || enemy3.CheckCollision(RedRect, ene3))
-               {
-                   Mix_PauseMusic();
-                   Mix_PlayChannel(MIX_CHANNEL, gLose, 0);
-                   Quit = true;
-
-               }
-
-           }
-           else
-           {
-               SDL_RenderCopy(renderer, RedCharacter, 0, &JumpRect);
-               if (enemy1.CheckCollision(JumpRect, ene1) || enemy2.CheckCollision(JumpRect, ene2) || enemy3.CheckCollision(JumpRect, ene3))
-               {
-                   Mix_PauseMusic();
-                   Mix_PlayChannel(MIX_CHANNEL, gLose, 0);
-                   Quit = true;
-
-               }
-           }
-
-           //Animations of Dino
-           if (DinoRect.x < 180) {
-               DinoRect.x += 57;
-           }
-           else DinoRect.x = 0;
-
-           //Animations of Bat
-           if (BatRect.x < 162)
-           {
-               BatRect.x += 43;
-           }
-           else BatRect.x = 0;
-
-           //Fix FPS
-           int realtime = fps.getTicks();
-           int one_frame = 1000 / FPS;
-           if (realtime < one_frame)
-           {
-               int delay_time = one_frame - realtime;
-               if (delay_time >= 0) SDL_Delay(delay_time);
-           }
-           else SDL_Delay(one_frame);
-
-           SDL_RenderPresent(renderer);
-
-       }
-       score_text.Free();
-
-       enemy1.~Enemy();
-       enemy2.~Enemy();
-       enemy3.~Enemy();
-       waitUntilKeyPressed();
-       quitSDL(window, renderer);
-       return 0;
+        quitSDL(window, renderer);
     }
     else
     {
-        cout << "Unable to load Media";
-        return 0;
+        cout << "Unable to load Media and TTF";
     }
-       
-        
+    CloseProgramme();
+    return 0;
 }

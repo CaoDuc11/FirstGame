@@ -18,8 +18,6 @@ public:
 
 	void Move(const int& acceleration);
 
-	void Render(SDL_Renderer* gRenderer, SDL_Rect* currentClip = nullptr);
-
 	int GetType();
 
 	int GetSpeed(const int& acceleration);
@@ -39,8 +37,6 @@ private:
 	int eWidth, eHeight;
 
 	int type;
-
-	SDL_Texture* EnemyTexture;
 };
 
 #endif 

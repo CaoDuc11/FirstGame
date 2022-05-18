@@ -28,7 +28,7 @@ void Character::Move()
 }
 void Character::HandleEvent(SDL_Event& e, Mix_Chunk* gJump)
 {
-	if (e.key.keysym.sym == SDLK_SPACE && OnGround())
+	if (e.key.keysym.sym == SDLK_UP && OnGround())
 	{
 		Mix_PlayChannel(MIX_CHANNEL, gJump, 0);
 		status = JUMP;

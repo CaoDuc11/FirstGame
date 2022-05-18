@@ -10,18 +10,16 @@ Enemy::Enemy(int _type)
 	eHeight = 0;
 
 	type = _type;
-	if (type == IN_AIR_ENEMY)
-	{
-		posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-		posY = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT +1) + ENEMY_MIN_HEIGHT;
-	}
-	else if (type == ON_GROUND_ENEMY)
-	{
-		posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
-		posY = GROUND - 8;
-	}
+    posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
+    
+    if (type == IN_AIR_ENEMY) posY = rand() % (ENEMY_MAX_HEIGHT - ENEMY_MIN_HEIGHT +1) + ENEMY_MIN_HEIGHT;
 
-	EnemyTexture = nullptr;
+    else 
+    {
+        if (type == ON_GROUND_ENEMY)  posY = GROUND - 8;
+
+        else  posY = GROUND + 10;
+    }
 }
 Enemy::~Enemy()
 {
@@ -32,15 +30,17 @@ Enemy::~Enemy()
 	eHeight = 0;
 
 	type = 0;
-	if (EnemyTexture != nullptr)
-	{
-		EnemyTexture = nullptr;
-	}
 }
 void Enemy :: Move(const int &acceleration)
 {
-	if (type == ON_GROUND_ENEMY)	posX += -(ENEMY_SPEED + acceleration);
-	else posX += -(FLY_SPEED + acceleration);
+	if (type == ON_GROUND_ENEMY )	posX += -(GROUND_SPEED + acceleration);
+
+	else
+    {
+        if (type == SLIME_ENEMY)  posX += -(ENEMY_SPEED + acceleration);
+        else posX += -(FLY_SPEED + acceleration);
+    }
+        
 	if( posX + MAX_ENEMY_WIDTH < 0)
 	{
 		posX = rand() % (SCREEN_WIDTH + ENEMY_POSITION_RANGE) + SCREEN_WIDTH;
@@ -99,17 +99,24 @@ bool Enemy :: CheckCollision(const SDL_Rect& object1, const SDL_Rect& object2)
 
     if (type == ON_GROUND_ENEMY)
     {
-        left_b = object2.x + 22;
-        right_b = object2.x + object2.w - 22;
+        left_b = object2.x + 23;
+        right_b = object2.x + object2.w - 23;
         top_b = object2.y + 10;
-        bottom_b = object2.y + object2.h - 10;
+        bottom_b = object2.y + object2.h ;
     }
-    else
+    if (type == IN_AIR_ENEMY)
     {
         left_b = object2.x + 12;
         right_b = object2.x + object2.w - 12;
         top_b = object2.y + 12 ;
         bottom_b = object2.y + object2.h -12;
+    }
+    else 
+    {
+        left_b = object2.x + 30;
+        right_b = object2.x + object2.w - 30;
+        top_b = object2.y + 15;
+        bottom_b = object2.y + object2.h ;
     }
     // Case 1: size object 1 < size object 2
     if (left_a > left_b && left_a < right_b)
