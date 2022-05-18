@@ -338,7 +338,7 @@ int main (int argc, char* argv[] )
 
         bool Quit_Menu = false;
         bool Play_Game = true;
-        Mix_PlayMusic(gMenuMusic, 1);
+        Mix_PlayMusic(gMenuMusic, -1);
         while( !Quit_Menu)
         {
             int checkExit = ShowMenu(renderer, gFontText);
@@ -375,7 +375,7 @@ int main (int argc, char* argv[] )
         {
             bool Quit = 0;
             if (Mix_PausedMusic()) Mix_ResumeMusic();
-            else Mix_PlayMusic(gMusic, 1);
+            else Mix_PlayMusic(gMusic, -1);
             Character character;
             Time fps;
 
