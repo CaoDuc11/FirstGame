@@ -503,7 +503,7 @@ int main (int argc, char* argv[] )
                 SDL_RenderCopy(renderer, slime, &SlimeRect, &ene4);
                 
                 //Animations of Dino
-                if (DinoRect.x < 180)DinoRect.x += 57;
+                if (DinoRect.x < 285)DinoRect.x += 57;
                 else DinoRect.x = 0;
 
                 //Animations of Bat
