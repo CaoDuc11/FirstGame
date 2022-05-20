@@ -230,6 +230,10 @@ int ShowMenu(SDL_Renderer* renderer, TTF_Font* font)
         }
         SDL_RenderPresent(renderer);
     }
+    for (int i = 0; i < kMenuItemNum; i++)
+    {
+        text_Menu[i].Free();
+    }
     SDL_DestroyTexture(g_img_Menu);
     return 2;
 }
@@ -308,6 +312,7 @@ int ShowInformation( SDL_Renderer* renderer, TTF_Font* font)
         SDL_RenderPresent(renderer);
     }
     SDL_DestroyTexture(g_img_Information);
+    text_back.Free();
 
 }
 void CloseProgramme()
